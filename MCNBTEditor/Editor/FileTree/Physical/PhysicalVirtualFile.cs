@@ -1,0 +1,10 @@
+namespace MCNBTEditor.Editor.FileTree.Physical {
+    /// <summary>
+    /// A class for a physical virtual file (that is not a directory). This can behave like a
+    /// directory though (e.g. via zipped files). See <see cref="TreeEntry.CanHoldItems"/>
+    /// </summary>
+    public class PhysicalVirtualFile : BasePhysicalVirtualFile {
+        public PhysicalVirtualFile() {
+        }
+    }
+}

@@ -1,0 +1,127 @@
+﻿<v:WindowEx x:Class="MCNBTEditor.WPF.MainWindow"
+            xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+            xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+            xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+            xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+            xmlns:v="clr-namespace:MCNBTEditor.WPF.Views"
+            xmlns:shortcuts="clr-namespace:MCNBTEditor.WPF.Shortcuts"
+            xmlns:controls="clr-namespace:MCNBTEditor.WPF.Controls.TreeViews.Controls"
+            xmlns:acs="clr-namespace:MCNBTEditor.WPF.AdvancedContextService"
+            xmlns:context="clr-namespace:MCNBTEditor.Editor.Context;assembly=MCNBTEditor"
+            xmlns:editor="clr-namespace:MCNBTEditor.Editor;assembly=MCNBTEditor"
+            xmlns:interactivity="clr-namespace:MCNBTEditor.WPF.Interactivity"
+            xmlns:wpf="clr-namespace:MCNBTEditor.WPF"
+            xmlns:ex="clr-namespace:MCNBTEditor.WPF.Explorer"
+            xmlns:ap="clr-namespace:MCNBTEditor.WPF.AttachedProperties"
+            xmlns:cs="clr-namespace:MCNBTEditor.WPF.Controls"
+            xmlns:zip="clr-namespace:MCNBTEditor.Editor.FileTree.Zip;assembly=MCNBTEditor"
+            xmlns:physical="clr-namespace:MCNBTEditor.Editor.FileTree.Physical;assembly=MCNBTEditor"
+            xmlns:nbt="clr-namespace:MCNBTEditor.Editor.FileTree.NBT;assembly=MCNBTEditor"
+            mc:Ignorable="d"
+            Title="NBT Editor" Height="600" Width="750"
+            Style="{StaticResource CustomWindowStyleEx}"
+            d:DataContext="{d:DesignInstance editor:MainViewModel}">
+    <Window.Resources>
+        <Style TargetType="{x:Type ex:FileTreeItem}" BasedOn="{StaticResource {x:Type TreeViewItem}}">
+            <Setter Property="Background" Value="{DynamicResource TreeViewItem.Static.Background}"/>
+            <!--
+            <Setter Property="BackgroundHovered" Value="{DynamicResource TreeViewItem.MouseOver.Background}"/>
+            <Setter Property="BorderBrushHovered" Value="{DynamicResource TreeViewItem.MouseOver.Border}"/>
+            <Setter Property="BackgroundSelected" Value="{DynamicResource TreeViewItem.Selected.Background}"/>
+            <Setter Property="BorderBrushSelected" Value="{DynamicResource TreeViewItem.Selected.Border}"/>
+            <Setter Property="BackgroundSelectedHovered" Value="{DynamicResource TreeViewItem.MouseOver.Background}"/>
+            <Setter Property="BackgroundFocused" Value="{DynamicResource TreeViewItem.Selected.Background}"/>
+            <Setter Property="BorderBrushFocused" Value="{DynamicResource TreeViewItem.Selected.Background}"/>
+            <Setter Property="BackgroundInactive" Value="{DynamicResource TreeViewItem.Selected.Inactive.Background}"/>
+            <Setter Property="BorderBrushInactive" Value="{DynamicResource TreeViewItem.Selected.Inactive.Border}"/>
+            -->
+            <Setter Property="HorizontalContentAlignment" Value="{Binding HorizontalContentAlignment, RelativeSource={RelativeSource AncestorType={x:Type ItemsControl}}}"/>
+            <Setter Property="VerticalContentAlignment" Value="{Binding VerticalContentAlignment, RelativeSource={RelativeSource AncestorType={x:Type ItemsControl}}}"/>
+            <Setter Property="Padding" Value="1,0,0,0"/>
+            <Setter Property="Foreground" Value="{DynamicResource ABrush.Foreground.Static}"/>
+            <Setter Property="FocusVisualStyle" Value="{StaticResource TreeViewItemFocusVisual}"/>
+            <Setter Property="shortcuts:UIInputManager.FocusPath" Value="Application/Editor/ObjectList/Item"/>
+            <Setter Property="IsExpanded" Value="{Binding IsExpanded, Mode=TwoWay}"/>
+        </Style>
+    </Window.Resources>
+    <Grid>
+        <Grid.Resources>
+            <wpf:DummyTreeItemStyleSelector x:Key="DummyTreeItemStyleSelector">
+                <wpf:DummyTreeItemStyleSelector.DefaultStyle>
+                    <Style TargetType="{x:Type ex:FileTreeItem}" BasedOn="{StaticResource {x:Type ex:FileTreeItem}}">
+                        <Setter Property="ap:HandleRequestBringIntoView.IsEnabled" Value="True"/>
+                    </Style>
+                </wpf:DummyTreeItemStyleSelector.DefaultStyle>
+                <wpf:DummyTreeItemStyleSelector.WithDummyStyle>
+                    <Style TargetType="{x:Type ex:FileTreeItem}" BasedOn="{StaticResource {x:Type ex:FileTreeItem}}">
+                        <Setter Property="ap:HandleRequestBringIntoView.IsEnabled" Value="True"/>
+                        <Setter Property="cs:TreeExtension.IsInitiallyExpandable" Value="{Binding HasExpandedOnce, Converter={StaticResource InvertBoolConverter}}"/>
+                    </Style>
+                </wpf:DummyTreeItemStyleSelector.WithDummyStyle>
+            </wpf:DummyTreeItemStyleSelector>
+        </Grid.Resources>
+        <ex:FileTreeControl DataContext="{Binding FileTree}"
+                            ItemsSource="{Binding Root.Items}"
+                            Background="Transparent" BorderBrush="{DynamicResource PanelBorderBrush}" BorderThickness="0"
+                            acs:AdvancedContextMenu.ContextGenerator="{x:Static context:ExplorerContextGenerator.Instance}"
+                            interactivity:FileDropAttachments.DropHandler="{Binding}"
+                            ScrollViewer.CanContentScroll="True"
+                            VirtualizingStackPanel.IsVirtualizing="True"
+                            VirtualizingStackPanel.VirtualizationMode="Recycling"
+                            VirtualizingStackPanel.ScrollUnit="Pixel"
+                            ItemContainerStyleSelector="{StaticResource DummyTreeItemStyleSelector}">
+            <ex:FileTreeControl.Style>
+                <Style TargetType="{x:Type ex:FileTreeControl}" BasedOn="{StaticResource {x:Type TreeView}}">
+                    <Setter Property="Background" Value="{DynamicResource TreeView.Static.Background}"/>
+                    <Setter Property="BorderBrush" Value="{DynamicResource TreeView.Static.Border}"/>
+                    <!--
+                    <Setter Property="BackgroundSelectionRectangle" Value="Transparent"/>
+                    <Setter Property="BorderBrushSelectionRectangle" Value="{DynamicResource TreeViewItem.Selected.Border}"/>
+                    -->
+                    <Setter Property="BorderThickness" Value="1"/>
+                    <Setter Property="Foreground" Value="{DynamicResource ABrush.Foreground.Static}" />
+                    <Setter Property="ScrollViewer.PanningMode" Value="Both"/>
+                    <Setter Property="Stylus.IsFlicksEnabled" Value="False"/>
+                </Style>
+            </ex:FileTreeControl.Style>
+            <ex:FileTreeControl.Resources>
+                <HierarchicalDataTemplate DataType="{x:Type zip:ZipEntryVirtualFolder}" ItemsSource="{Binding Items, Mode=OneTime}">
+                    <!-- A zip folder; todo, put an icon in here somewhere -->
+                    <TextBlock Text="{Binding ZipFileName}" ToolTip="{Binding FullZipPath}"/>
+                </HierarchicalDataTemplate>
+                <HierarchicalDataTemplate DataType="{x:Type zip:ZipEntryVirtualFile}" ItemsSource="{Binding Items, Mode=OneTime}">
+                    <!-- A zip file; todo, put an icon in here somewhere -->
+                    <TextBlock Text="{Binding ZipFileName}" ToolTip="{Binding FullZipPath}"/>
+                </HierarchicalDataTemplate>
+                <HierarchicalDataTemplate DataType="{x:Type zip:NestedZipVirtualFile}" ItemsSource="{Binding Items, Mode=OneTime}">
+                    <!-- A zip file within another zip file -->
+                    <TextBlock Text="{Binding ZipFileName}" ToolTip="{Binding FullZipPath}"/>
+                </HierarchicalDataTemplate>
+                <HierarchicalDataTemplate DataType="{x:Type zip:PhysicalZipVirtualFile}" ItemsSource="{Binding Items, Mode=OneTime}">
+                    <!-- A zip file inside of a physical folder -->
+                    <cs:IconTextPairControl Text="{Binding FileName}" TargetFilePath="{Binding FilePath}" Background="Transparent"/>
+                </HierarchicalDataTemplate>
+                <HierarchicalDataTemplate DataType="{x:Type physical:PhysicalVirtualFolder}" ItemsSource="{Binding Items, Mode=OneTime}">
+                    <!-- A physical folder -->
+                    <cs:IconTextPairControl Text="{Binding FileName}" TargetFilePath="{Binding FilePath}" Background="Transparent"/>
+                </HierarchicalDataTemplate>
+                <DataTemplate DataType="{x:Type physical:PhysicalVirtualFile}">
+                    <!-- A physical file -->
+                    <cs:IconTextPairControl Text="{Binding FileName}" TargetFilePath="{Binding FilePath}" Background="Transparent"/>
+                </DataTemplate>
+                <HierarchicalDataTemplate DataType="{x:Type nbt:ZipNBTDatVirtualFile}" ItemsSource="{Binding Items, Mode=OneTime}">
+                    <TextBlock Text="{Binding ZipFileName}"/>
+                </HierarchicalDataTemplate>
+                <HierarchicalDataTemplate DataType="{x:Type nbt:PhysicalNBTDatVirtualFile}" ItemsSource="{Binding Items, Mode=OneTime}">
+                    <cs:IconTextPairControl Text="{Binding FileName}" TargetFilePath="{Binding FilePath}" Background="Transparent"/>
+                </HierarchicalDataTemplate>
+                <HierarchicalDataTemplate DataType="{x:Type editor:BaseNBTCollectionTreeItem}" ItemsSource="{Binding Items, Mode=OneTime}">
+                    <TextBlock Text="{Binding Name, FallbackValue='!unnamed!'}"/>
+                </HierarchicalDataTemplate>
+                <DataTemplate DataType="{x:Type editor:BaseNBTTreeItem}">
+                    <TextBlock Text="{Binding Name, FallbackValue='!unnamed!'}"/>
+                </DataTemplate>
+            </ex:FileTreeControl.Resources>
+        </ex:FileTreeControl>
+    </Grid>
+</v:WindowEx>

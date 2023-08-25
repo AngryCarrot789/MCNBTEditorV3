@@ -1,0 +1,31 @@
+<ResourceDictionary xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+                    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+                    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+                    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+                    xmlns:system="clr-namespace:System;assembly=mscorlib"
+                    xmlns:converters="clr-namespace:MCNBTEditor.WPF.Converters"
+                    mc:Ignorable="d">
+    <converters:FileSizeConverter x:Key="FileSizeConverter"/>
+
+    <system:Double x:Key="HiddenTextOpacity">0.5</system:Double>
+    <system:Double x:Key="VisibleTextOpacity">1.0</system:Double>
+    <converters:BoolConverter x:Key="FileHiddenOpacityConverter" FalseValue="{StaticResource VisibleTextOpacity}" TrueValue="{StaticResource HiddenTextOpacity}"/>
+
+    <!-- File Explorer Styles -->
+
+    <Style x:Key="FileExplorerListViewItem" TargetType="{x:Type ListViewItem}" BasedOn="{StaticResource {x:Type ListViewItem}}">
+        <Setter Property="HorizontalContentAlignment" Value="Stretch" />
+    </Style>
+
+    <Style x:Key="DriveWrapListBoxStyle" TargetType="{x:Type ListBox}" BasedOn="{StaticResource {x:Type ListBox}}">
+        <Setter Property="HorizontalContentAlignment" Value="Stretch" />
+        <Setter Property="ScrollViewer.HorizontalScrollBarVisibility" Value="Disabled" />
+        <Setter Property="ItemsPanel">
+            <Setter.Value>
+                <ItemsPanelTemplate>
+                    <WrapPanel Orientation="Horizontal"/>
+                </ItemsPanelTemplate>
+            </Setter.Value>
+        </Setter>
+    </Style>
+</ResourceDictionary>
