@@ -4,12 +4,12 @@ using System.Windows.Threading;
 using MCNBTEditor.Services;
 
 namespace MCNBTEditor.WPF.Utils {
-    public class DispatcherDelegate : IDispatcher {
+    public class ApplicationDispatcherDelegate : IApplicationDispatcher {
         private readonly Dispatcher dispatcher;
 
         public bool IsOnOwnerThread => this.dispatcher.CheckAccess();
 
-        public DispatcherDelegate(Dispatcher dispatcher) {
+        public ApplicationDispatcherDelegate(Dispatcher dispatcher) {
             this.dispatcher = dispatcher ?? throw new ArgumentNullException(nameof(dispatcher), "Dispatcher cannot be null");
         }
 
