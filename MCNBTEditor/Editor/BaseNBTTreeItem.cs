@@ -17,6 +17,8 @@ namespace MCNBTEditor.Editor {
             set => this.RaisePropertyChanged(ref this.name, value);
         }
 
+        public abstract NBTType TagType { get; }
+
         protected BaseNBTTreeItem(TreeFileSystem fileSystem) {
             this.FileSystem = fileSystem;
         }
@@ -121,10 +123,12 @@ namespace MCNBTEditor.Editor {
     }
 
     public abstract class BaseNbtPrimitiveTreeItem : BaseNBTTreeItem {
+        public override bool CanHoldItems => false;
         protected BaseNbtPrimitiveTreeItem(TreeFileSystem fileSystem) : base(fileSystem) { }
     }
 
     public abstract class BaseNbtArrayTreeItem : BaseNBTTreeItem {
+        public override bool CanHoldItems => false;
         protected BaseNbtArrayTreeItem(TreeFileSystem fileSystem) : base(fileSystem) { }
     }
 
@@ -186,6 +190,8 @@ namespace MCNBTEditor.Editor {
     }
 
     public class TagEndTreeItem : BaseNbtPrimitiveTreeItem {
+        public override NBTType TagType => NBTType.End;
+
         public TagEndTreeItem(TreeFileSystem fileSystem) : base(fileSystem) { }
 
         public NBTTagEnd ToTagCore() => new NBTTagEnd();
@@ -194,7 +200,12 @@ namespace MCNBTEditor.Editor {
 
     public class TagByteTreeItem : BaseNbtPrimitiveTreeItem {
         private byte value;
-        public byte Value { get => this.value; set => this.RaisePropertyChanged(ref this.value, value); }
+        public byte Value {
+            get => this.value;
+            set => this.RaisePropertyChanged(ref this.value, value);
+        }
+
+        public override NBTType TagType => NBTType.Byte;
 
         public TagByteTreeItem(TreeFileSystem fileSystem) : base(fileSystem) { }
 
@@ -209,6 +220,8 @@ namespace MCNBTEditor.Editor {
             set => this.RaisePropertyChanged(ref this.value, value);
         }
 
+        public override NBTType TagType => NBTType.Short;
+
         public TagShortTreeItem(TreeFileSystem fileSystem) : base(fileSystem) { }
 
         public NBTTagShort ToTagCore() => new NBTTagShort(this.value);
@@ -221,6 +234,8 @@ namespace MCNBTEditor.Editor {
             get => this.value;
             set => this.RaisePropertyChanged(ref this.value, value);
         }
+
+        public override NBTType TagType => NBTType.Int;
 
         public TagIntTreeItem(TreeFileSystem fileSystem) : base(fileSystem) { }
 
@@ -235,6 +250,8 @@ namespace MCNBTEditor.Editor {
             set => this.RaisePropertyChanged(ref this.value, value);
         }
 
+        public override NBTType TagType => NBTType.Long;
+
         public TagLongTreeItem(TreeFileSystem fileSystem) : base(fileSystem) { }
 
         public NBTTagLong ToTagCore() => new NBTTagLong(this.value);
@@ -247,6 +264,8 @@ namespace MCNBTEditor.Editor {
             get => this.value;
             set => this.RaisePropertyChanged(ref this.value, value);
         }
+
+        public override NBTType TagType => NBTType.Float;
 
         public TagFloatTreeItem(TreeFileSystem fileSystem) : base(fileSystem) { }
 
@@ -261,6 +280,8 @@ namespace MCNBTEditor.Editor {
             set => this.RaisePropertyChanged(ref this.value, value);
         }
 
+        public override NBTType TagType => NBTType.Double;
+
         public TagDoubleTreeItem(TreeFileSystem fileSystem) : base(fileSystem) { }
 
         public NBTTagDouble ToTagCore() => new NBTTagDouble(this.value);
@@ -273,6 +294,8 @@ namespace MCNBTEditor.Editor {
             get => this.value;
             set => this.RaisePropertyChanged(ref this.value, value);
         }
+
+        public override NBTType TagType => NBTType.String;
 
         public TagStringTreeItem(TreeFileSystem fileSystem) : base(fileSystem) { }
 
@@ -287,6 +310,8 @@ namespace MCNBTEditor.Editor {
             set => this.RaisePropertyChanged(ref this.value, value);
         }
 
+        public override NBTType TagType => NBTType.ByteArray;
+
         public TagByteArrayTreeItem(TreeFileSystem fileSystem) : base(fileSystem) { }
 
         public NBTTagByteArray ToTagCore() => new NBTTagByteArray(Arrays.CloneArrayUnsafe(this.value));
@@ -299,6 +324,8 @@ namespace MCNBTEditor.Editor {
             get => this.value;
             set => this.RaisePropertyChanged(ref this.value, value);
         }
+
+        public override NBTType TagType => NBTType.IntArray;
 
         public TagIntArrayTreeItem(TreeFileSystem fileSystem) : base(fileSystem) { }
 
@@ -313,6 +340,8 @@ namespace MCNBTEditor.Editor {
             set => this.RaisePropertyChanged(ref this.value, value);
         }
 
+        public override NBTType TagType => NBTType.LongArray;
+
         public TagLongArrayTreeItem(TreeFileSystem fileSystem) : base(fileSystem) { }
 
         public NBTTagLongArray ToTagCore() => new NBTTagLongArray(Arrays.CloneArrayUnsafe(this.value));
@@ -320,6 +349,8 @@ namespace MCNBTEditor.Editor {
     }
 
     public class TagListTreeItem : BaseNBTCollectionTreeItem {
+        public override NBTType TagType => NBTType.List;
+
         public TagListTreeItem(TreeFileSystem fileSystem) : base(fileSystem) { }
 
         public NBTTagList ToTagCore() => ToList(this);
@@ -327,6 +358,8 @@ namespace MCNBTEditor.Editor {
     }
 
     public class TagCompoundTreeItem : BaseNBTCollectionTreeItem {
+        public override NBTType TagType => NBTType.Compound;
+
         public TagCompoundTreeItem(TreeFileSystem fileSystem) : base(fileSystem) { }
 
         public NBTTagCompound ToTagCore() => ToCompound(this);

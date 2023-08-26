@@ -96,7 +96,7 @@ namespace MCNBTEditor.Notifications {
             }
 
             if (!cancel.IsCancellationRequested) {
-                await IoC.Dispatcher.InvokeAsync(this.AutoHideAction);
+                await IoC.ApplicationDispatcher.InvokeAsync(this.AutoHideAction);
             }
         }
 

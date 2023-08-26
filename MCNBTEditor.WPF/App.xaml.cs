@@ -59,7 +59,7 @@ namespace MCNBTEditor.WPF {
                 Directory.SetCurrentDirectory(dir);
             }
 
-            IoC.Dispatcher = new DispatcherDelegate(this.Dispatcher);
+            IoC.ApplicationDispatcher = new ApplicationDispatcherDelegate(this.Dispatcher);
             IoC.OnShortcutModified = (x) => {
                 if (!string.IsNullOrWhiteSpace(x)) {
                     ShortcutManager.Instance.InvalidateShortcutCache();

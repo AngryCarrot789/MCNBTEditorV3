@@ -29,7 +29,7 @@ namespace MCNBTEditor.Editor.Context {
                 return;
             }
 
-            Tree explorer = item.Explorer;
+            FileTree.FileTree explorer = item.Explorer;
             if (explorer != null || context.TryGetContext(out explorer)) {
                 if (item.ContainsKey(Win32FileSystem.FilePathKey)) {
                     list.Add(new CommandContextEntry("Open", explorer.OpenItemCommand, item));

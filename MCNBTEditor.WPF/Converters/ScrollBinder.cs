@@ -30,7 +30,7 @@ namespace MCNBTEditor.WPF.Converters {
         private static void OnVerticalBindGroupPropertyChanged(DependencyObject d, DependencyPropertyChangedEventArgs e) {
             if (d is ScrollViewer scroller) {
                 if (e.OldValue is string oldGroup) {
-                    if (RegisteredScrollers.TryGetValue(oldGroup, out var list)) {
+                    if (RegisteredScrollers.TryGetValue(oldGroup, out List<ScrollViewer> list)) {
                         list.Remove(scroller);
                     }
                 }
@@ -58,7 +58,7 @@ namespace MCNBTEditor.WPF.Converters {
                 return;
             }
 
-            if (RegisteredScrollers.TryGetValue(group, out var list)) {
+            if (RegisteredScrollers.TryGetValue(group, out List<ScrollViewer> list)) {
                 IsUpdatingScroll = true;
                 try {
                     foreach (ScrollViewer scrollViewer in list) {
@@ -76,7 +76,7 @@ namespace MCNBTEditor.WPF.Converters {
         private static void OnHorizontalBindGroupPropertyChanged(DependencyObject d, DependencyPropertyChangedEventArgs e) {
             if (d is ScrollViewer scroller) {
                 if (e.OldValue is string oldGroup) {
-                    if (RegisteredScrollers.TryGetValue(oldGroup, out var list)) {
+                    if (RegisteredScrollers.TryGetValue(oldGroup, out List<ScrollViewer> list)) {
                         list.Remove(scroller);
                     }
                 }
@@ -104,7 +104,7 @@ namespace MCNBTEditor.WPF.Converters {
                 return;
             }
 
-            if (RegisteredScrollers.TryGetValue(group, out var list)) {
+            if (RegisteredScrollers.TryGetValue(group, out List<ScrollViewer> list)) {
                 IsUpdatingScroll = true;
                 try {
                     foreach (ScrollViewer scrollViewer in list) {

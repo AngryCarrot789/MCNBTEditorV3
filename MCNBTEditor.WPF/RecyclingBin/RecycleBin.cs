@@ -13,7 +13,7 @@ namespace MCNBTEditor.WPF.RecyclingBin {
         /// <param name="flags">FileOperationFlags to add in addition to FOF_ALLOWUNDO</param>
         public static bool Send(string path, FileOperationFlags flags) {
             try {
-                var fs = new SHFILEOPSTRUCT {
+                SHFILEOPSTRUCT fs = new SHFILEOPSTRUCT {
                     wFunc = FileOperationType.FO_DELETE,
                     pFrom = path + '\0' + '\0',
                     fFlags = FileOperationFlags.FOF_ALLOWUNDO | flags
@@ -51,7 +51,7 @@ namespace MCNBTEditor.WPF.RecyclingBin {
 
         private static bool DeleteFile(string path, FileOperationFlags flags) {
             try {
-                var fs = new SHFILEOPSTRUCT {
+                SHFILEOPSTRUCT fs = new SHFILEOPSTRUCT {
                     wFunc = FileOperationType.FO_DELETE,
                     pFrom = path + '\0' + '\0',
                     fFlags = flags

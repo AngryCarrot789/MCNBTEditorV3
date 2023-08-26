@@ -31,11 +31,11 @@ namespace MCNBTEditor.WPF.Services {
         public async Task<IWindow> ShowAsync<T>(T viewModel) {
             for (Type type = typeof(T); type != null; type = type.BaseType) {
                 if (this.vmToView.TryGetValue(type, out Func<Window> func)) {
-                    if (IoC.Dispatcher.IsOnOwnerThread) {
+                    if (IoC.ApplicationDispatcher.IsOnOwnerThread) {
                         return ShowWindow(func, viewModel);
                     }
                     else {
-                        return await IoC.Dispatcher.InvokeAsync(() => ShowWindow(func, viewModel));
+                        return await IoC.ApplicationDispatcher.InvokeAsync(() => ShowWindow(func, viewModel));
                     }
                 }
             }
@@ -46,11 +46,11 @@ namespace MCNBTEditor.WPF.Services {
         public async Task<bool> ShowDialogAsync<T>(T viewModel) {
             for (Type type = typeof(T); type != null; type = type.BaseType) {
                 if (this.vmToDialog.TryGetValue(type, out Func<Window> func)) {
-                    if (IoC.Dispatcher.IsOnOwnerThread) {
+                    if (IoC.ApplicationDispatcher.IsOnOwnerThread) {
                         return ShowDialog(func, viewModel);
                     }
                     else {
-                        return await IoC.Dispatcher.InvokeAsync(() => ShowDialog(func, viewModel));
+                        return await IoC.ApplicationDispatcher.InvokeAsync(() => ShowDialog(func, viewModel));
                     }
                 }
             }

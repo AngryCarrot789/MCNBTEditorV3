@@ -4,7 +4,7 @@ using System.Globalization;
 using System.Windows.Data;
 using System.Windows.Documents;
 
-namespace MCNBTEditor.NBT.UI.Inlines {
+namespace MCNBTEditor.WPF.Converters {
     public class NBTCollectionInlineHeaderConverter : BaseNBTHeaderRunConverter, IMultiValueConverter {
         public object Convert(object[] values, Type targetType, object parameter, CultureInfo culture) {
             if (values == null || (values.Length != 2 && values.Length != 3)) {

@@ -1,15 +1,23 @@
+using MCNBTEditor.Drop;
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
+using System.Collections.Specialized;
 using System.Threading.Tasks;
 
 namespace MCNBTEditor.Editor.FileTree {
     /// <summary>
-    /// The base class for an entry in a tree system. Supports both inheritance and composition (via the Set/Get/TryGet data functions)
+    /// The base class for an entry in a tree system. Supports both inheritance and composition (via the Set/Get/TryGet data functions).
+    /// <para>
+    /// This class is meant to be a view model acting as both a model and view model. Because of how WPF binding works, you're effectively
+    /// forced to use sub-types of this class (e.g. physical files, zip files, etc.) in order to implement bindable properties. Otherwise,
+    /// you could simply just set specific data keys via the Get/Set/TryGet data functions in order to determine what type of file
+    /// an instance of <see cref="TreeEntry"/> is
+    /// </para>
     /// </summary>
     public class TreeEntry : BaseViewModel {
         private readonly ObservableCollection<TreeEntry> items;
-        internal TreeEntry parent;
+        private TreeEntry parent;
         private bool isExpanded;
         private bool isExpanding;
 
@@ -22,6 +30,16 @@ namespace MCNBTEditor.Editor.FileTree {
         /// This tree items' child items
         /// </summary>
         public ReadOnlyObservableCollection<TreeEntry> Items { get; }
+
+        /// <summary>
+        /// Whether this item is empty, as in, has no children. This will not throw even if <see cref="CanHoldItems"/> is false
+        /// </summary>
+        public bool IsEmpty => this.items.Count < 1;
+
+        /// <summary>
+        /// The number of children in this item
+        /// </summary>
+        public int ItemCount => this.items.Count;
 
         /// <summary>
         /// Whether or not this item has been expanded at least once by the user
@@ -66,11 +84,14 @@ namespace MCNBTEditor.Editor.FileTree {
         public virtual bool CanHoldItems => false;
 
         /// <summary>
-        /// The file system associated with this entry. Will be null for the root of the tree
+        /// The file system associated with this entry. Will be null for the absolute tree root (which just acts as a container for entries)
         /// </summary>
         public TreeFileSystem FileSystem { get; set; }
 
-        public Tree Explorer { get; set; }
+        /// <summary>
+        /// The explorer associated with this tree entry. This is used to process things such as navigation, deletion, etc.
+        /// </summary>
+        public FileTree Explorer { get; set; }
 
         private readonly Dictionary<string, object> dataKeys;
         private bool isLazilyLoaded;
@@ -81,6 +102,12 @@ namespace MCNBTEditor.Editor.FileTree {
             this.dataKeys = new Dictionary<string, object>();
             this.items = new ObservableCollection<TreeEntry>();
             this.Items = new ReadOnlyObservableCollection<TreeEntry>(this.items);
+            this.items.CollectionChanged += this.OnChildrenCollectionChanged;
+        }
+
+        protected virtual void OnChildrenCollectionChanged(object sender, NotifyCollectionChangedEventArgs e) {
+            this.RaisePropertyChanged(nameof(this.ItemCount));
+            this.RaisePropertyChanged(nameof(this.IsEmpty));
         }
 
         public T GetData<T>(string key) {
@@ -158,16 +185,16 @@ namespace MCNBTEditor.Editor.FileTree {
         }
 
         protected virtual async Task<bool> OnExpandAsync() {
-            if (!this.CanHoldItems || this.FileSystem == null) {
-                return false;
+            if (this.CanHoldItems && this.FileSystem != null) {
+                if (!this.isLazilyLoaded) {
+                    this.isLazilyLoaded = true;
+                    await this.FileSystem.QueryContent(this);
+                }
+
+                return this.items.Count > 0;
             }
 
-            if (!this.isLazilyLoaded) {
-                this.isLazilyLoaded = true;
-                await this.FileSystem.QueryContent(this);
-            }
-
-            return this.items.Count > 0;
+            return false;
         }
 
         /// <summary>
@@ -226,7 +253,7 @@ namespace MCNBTEditor.Editor.FileTree {
             else if (this.IsPartOfParentHierarchy(item))
                 throw new Exception("Cannot add an parent to itself");
 
-            item.parent = this.parent;
+            item.parent = this;
             this.items.Insert(index, item);
             item.RaisePropertyChanged(nameof(item.Parent));
             item.OnAddedToParent();

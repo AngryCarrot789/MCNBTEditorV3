@@ -98,9 +98,9 @@ namespace MCNBTEditor.WPF.Utils {
         public static readonly DependencyProperty TriggersProperty = DependencyProperty.RegisterAttached("Triggers", typeof(ConditionalEventTriggerCollection), typeof(ConditionalEventTrigger), new PropertyMetadata {
             PropertyChangedCallback = (obj, e) => {
                 // When "Triggers" is set, register handlers for each trigger in the list 
-                var element = (FrameworkElement) obj;
-                var triggers = (List<ConditionalEventTrigger>) e.NewValue;
-                foreach (var trigger in triggers)
+                FrameworkElement element = (FrameworkElement) obj;
+                List<ConditionalEventTrigger> triggers = (List<ConditionalEventTrigger>) e.NewValue;
+                foreach (ConditionalEventTrigger trigger in triggers)
                     element.AddHandler(trigger.RoutedEvent, new RoutedEventHandler((obj2, e2) =>
                         trigger.OnRoutedEvent(element)));
             }
@@ -115,8 +115,8 @@ namespace MCNBTEditor.WPF.Utils {
             this.DataContext = element.DataContext; // Allow data binding to access element properties
             if (this.Condition) {
                 // Construct an EventTrigger containing the actions, then trigger it 
-                var dummyTrigger = new EventTrigger {RoutedEvent = _triggerActionsEvent};
-                foreach (var action in this.Actions)
+                EventTrigger dummyTrigger = new EventTrigger {RoutedEvent = _triggerActionsEvent};
+                foreach (TriggerAction action in this.Actions)
                     dummyTrigger.Actions.Add(action);
 
                 element.Triggers.Add(dummyTrigger);

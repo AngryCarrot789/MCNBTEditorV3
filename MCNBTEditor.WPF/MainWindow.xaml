@@ -17,14 +17,15 @@
             xmlns:zip="clr-namespace:MCNBTEditor.Editor.FileTree.Zip;assembly=MCNBTEditor"
             xmlns:physical="clr-namespace:MCNBTEditor.Editor.FileTree.Physical;assembly=MCNBTEditor"
             xmlns:nbt="clr-namespace:MCNBTEditor.Editor.FileTree.NBT;assembly=MCNBTEditor"
+            xmlns:c="clr-namespace:MCNBTEditor.WPF.Converters"
             mc:Ignorable="d"
-            Title="NBT Editor" Height="600" Width="750"
+            Title="NBT Editor" Height="500" Width="750"
             Style="{StaticResource CustomWindowStyleEx}"
+            BorderBrush="DodgerBlue"
             d:DataContext="{d:DesignInstance editor:MainViewModel}">
     <Window.Resources>
-        <Style TargetType="{x:Type ex:FileTreeItem}" BasedOn="{StaticResource {x:Type TreeViewItem}}">
+        <Style TargetType="{x:Type ex:FileTreeItem}" BasedOn="{StaticResource {x:Type controls:MultiSelectTreeViewItem}}">
             <Setter Property="Background" Value="{DynamicResource TreeViewItem.Static.Background}"/>
-            <!--
             <Setter Property="BackgroundHovered" Value="{DynamicResource TreeViewItem.MouseOver.Background}"/>
             <Setter Property="BorderBrushHovered" Value="{DynamicResource TreeViewItem.MouseOver.Border}"/>
             <Setter Property="BackgroundSelected" Value="{DynamicResource TreeViewItem.Selected.Background}"/>
@@ -34,10 +35,10 @@
             <Setter Property="BorderBrushFocused" Value="{DynamicResource TreeViewItem.Selected.Background}"/>
             <Setter Property="BackgroundInactive" Value="{DynamicResource TreeViewItem.Selected.Inactive.Background}"/>
             <Setter Property="BorderBrushInactive" Value="{DynamicResource TreeViewItem.Selected.Inactive.Border}"/>
-            -->
             <Setter Property="HorizontalContentAlignment" Value="{Binding HorizontalContentAlignment, RelativeSource={RelativeSource AncestorType={x:Type ItemsControl}}}"/>
             <Setter Property="VerticalContentAlignment" Value="{Binding VerticalContentAlignment, RelativeSource={RelativeSource AncestorType={x:Type ItemsControl}}}"/>
             <Setter Property="Padding" Value="1,0,0,0"/>
+            <Setter Property="BorderThickness" Value="0"/>
             <Setter Property="Foreground" Value="{DynamicResource ABrush.Foreground.Static}"/>
             <Setter Property="FocusVisualStyle" Value="{StaticResource TreeViewItemFocusVisual}"/>
             <Setter Property="shortcuts:UIInputManager.FocusPath" Value="Application/Editor/ObjectList/Item"/>
@@ -65,33 +66,126 @@
                             Background="Transparent" BorderBrush="{DynamicResource PanelBorderBrush}" BorderThickness="0"
                             acs:AdvancedContextMenu.ContextGenerator="{x:Static context:ExplorerContextGenerator.Instance}"
                             interactivity:FileDropAttachments.DropHandler="{Binding}"
-                            ScrollViewer.CanContentScroll="True"
                             VirtualizingStackPanel.IsVirtualizing="True"
                             VirtualizingStackPanel.VirtualizationMode="Recycling"
                             VirtualizingStackPanel.ScrollUnit="Pixel"
                             ItemContainerStyleSelector="{StaticResource DummyTreeItemStyleSelector}">
             <ex:FileTreeControl.Style>
-                <Style TargetType="{x:Type ex:FileTreeControl}" BasedOn="{StaticResource {x:Type TreeView}}">
-                    <Setter Property="Background" Value="{DynamicResource TreeView.Static.Background}"/>
-                    <Setter Property="BorderBrush" Value="{DynamicResource TreeView.Static.Border}"/>
-                    <!--
+                <Style TargetType="{x:Type ex:FileTreeControl}" BasedOn="{StaticResource {x:Type controls:MultiSelectTreeView}}">
                     <Setter Property="BackgroundSelectionRectangle" Value="Transparent"/>
                     <Setter Property="BorderBrushSelectionRectangle" Value="{DynamicResource TreeViewItem.Selected.Border}"/>
-                    -->
-                    <Setter Property="BorderThickness" Value="1"/>
-                    <Setter Property="Foreground" Value="{DynamicResource ABrush.Foreground.Static}" />
                     <Setter Property="ScrollViewer.PanningMode" Value="Both"/>
-                    <Setter Property="Stylus.IsFlicksEnabled" Value="False"/>
                 </Style>
             </ex:FileTreeControl.Style>
             <ex:FileTreeControl.Resources>
-                <HierarchicalDataTemplate DataType="{x:Type zip:ZipEntryVirtualFolder}" ItemsSource="{Binding Items, Mode=OneTime}">
-                    <!-- A zip folder; todo, put an icon in here somewhere -->
-                    <TextBlock Text="{Binding ZipFileName}" ToolTip="{Binding FullZipPath}"/>
+                <c:TagIconConverter x:Key="TagIconConverter"
+                                    TagByte="/Resources/Icons/FileIcon-TagByte8.png"
+                                    TagShort="/Resources/Icons/FileIcon-TagShort16.png"
+                                    TagInt="/Resources/Icons/FileIcon-TagInt32.png"
+                                    TagLong="/Resources/Icons/FileIcon-TagLong64.png"
+                                    TagFloat="/Resources/Icons/FileIcon-TagFloat32.png"
+                                    TagDouble="/Resources/Icons/FileIcon-TagDouble64.png"
+                                    TagString="/Resources/Icons/FileIcon-TagString.png"
+                                    TagList="/Resources/Icons/icons8-bulleted-list-48.png"
+                                    TagByteArray="/Resources/Icons/TagArrayIcon.png"
+                                    TagIntArray="/Resources/Icons/TagArrayIcon.png"
+                                    TagLongArray="/Resources/Icons/TagArrayIcon.png"
+                                    TagCompoundClosed="/Resources/Icons/icons8-closed-box-48.png"
+                                    TagCompoundOpenEmpty="/Resources/Icons/icons8-empty-box-48.png"
+                                    TagCompoundOpenFull="/Resources/Icons/icons8-open-box-48.png"/>
+
+                <Style TargetType="{x:Type Run}" x:Key="NBTTagNameRunStyle">
+                    <Setter Property="FontWeight" Value="Bold"/>
+                </Style>
+
+                <Style TargetType="{x:Type Run}" x:Key="NBTTagValueRunStyle">
+                    <Setter Property="FontFamily" Value="Consolas"/>
+                </Style>
+
+                <c:NBTCollectionInlineHeaderConverter x:Key="NBTCollectionInlinesNameConverter" TagNameRunStyle="{StaticResource NBTTagNameRunStyle}" TagDataRunStyle="{StaticResource NBTTagValueRunStyle}"/>
+                <c:NBTArrayInlineHeaderConverter      x:Key="NBTArrayInlinesNameConverter"      TagNameRunStyle="{StaticResource NBTTagNameRunStyle}" TagDataRunStyle="{StaticResource NBTTagValueRunStyle}"/>
+                <c:NBTPrimitiveInlineHeaderConverter  x:Key="NBTPrimitiveInlinesNameConverter"  TagNameRunStyle="{StaticResource NBTTagNameRunStyle}" TagDataRunStyle="{StaticResource NBTTagValueRunStyle}"/>
+
+                <HierarchicalDataTemplate DataType="{x:Type editor:TagCompoundTreeItem}" ItemsSource="{Binding Items, Mode=OneTime}">
+                    <StackPanel Background="Transparent" Orientation="Horizontal" Height="18">
+                        <Image x:Name="Img" Width="16" Height="16"/>
+                        <TextBlock Margin="4 0 0 0">
+                            <ap:TextBlockHelper.BindableInlines>
+                                <MultiBinding Converter="{StaticResource NBTCollectionInlinesNameConverter}">
+                                    <Binding Path="Name"/>
+                                    <Binding Path="ItemCount"/>
+                                </MultiBinding>
+                            </ap:TextBlockHelper.BindableInlines>
+                        </TextBlock>
+                    </StackPanel>
+                    <HierarchicalDataTemplate.Triggers>
+                        <MultiDataTrigger>
+                            <MultiDataTrigger.Conditions>
+                                <Condition Binding="{Binding IsEmpty}" Value="True"/>
+                                <Condition Binding="{Binding RelativeSource={RelativeSource AncestorType={x:Type controls:MultiSelectTreeViewItem}}, Path=IsExpanded}" Value="True"/>
+                            </MultiDataTrigger.Conditions>
+                            <Setter TargetName="Img" Property="Source" Value="/Resources/Icons/icons8-empty-box-48.png"/>
+                        </MultiDataTrigger>
+                        <MultiDataTrigger>
+                            <MultiDataTrigger.Conditions>
+                                <Condition Binding="{Binding IsEmpty}" Value="False"/>
+                                <Condition Binding="{Binding RelativeSource={RelativeSource AncestorType={x:Type controls:MultiSelectTreeViewItem}}, Path=IsExpanded}" Value="True"/>
+                            </MultiDataTrigger.Conditions>
+                            <Setter TargetName="Img" Property="Source" Value="/Resources/Icons/icons8-open-box-48.png"/>
+                        </MultiDataTrigger>
+                        <DataTrigger Binding="{Binding RelativeSource={RelativeSource AncestorType={x:Type controls:MultiSelectTreeViewItem}}, Path=IsExpanded}" Value="False">
+                            <Setter TargetName="Img" Property="Source" Value="/Resources/Icons/icons8-closed-box-48.png"/>
+                        </DataTrigger>
+                    </HierarchicalDataTemplate.Triggers>
                 </HierarchicalDataTemplate>
-                <HierarchicalDataTemplate DataType="{x:Type zip:ZipEntryVirtualFile}" ItemsSource="{Binding Items, Mode=OneTime}">
-                    <!-- A zip file; todo, put an icon in here somewhere -->
-                    <TextBlock Text="{Binding ZipFileName}" ToolTip="{Binding FullZipPath}"/>
+
+                <HierarchicalDataTemplate DataType="{x:Type editor:TagListTreeItem}" ItemsSource="{Binding Items, Mode=OneTime}">
+                    <StackPanel Background="Transparent" Orientation="Horizontal" Height="18">
+                        <Image Width="16" Height="16" Source="/Resources/Icons/icons8-bulleted-list-48.png"/>
+                        <TextBlock Margin="4 0 0 0">
+                            <ap:TextBlockHelper.BindableInlines>
+                                <MultiBinding Converter="{StaticResource NBTCollectionInlinesNameConverter}">
+                                    <Binding Path="Name"/>
+                                    <Binding Path="ItemCount"/>
+                                </MultiBinding>
+                            </ap:TextBlockHelper.BindableInlines>
+                        </TextBlock>
+                    </StackPanel>
+                </HierarchicalDataTemplate>
+
+                <HierarchicalDataTemplate DataType="{x:Type editor:BaseNbtArrayTreeItem}">
+                    <StackPanel Background="Transparent" Orientation="Horizontal" Height="18">
+                        <Image Source="{Binding TagType, Converter={StaticResource TagIconConverter}}" Width="16" Height="16"/>
+                        <TextBlock Margin="4 0 0 0">
+                            <ap:TextBlockHelper.BindableInlines>
+                                <MultiBinding Converter="{StaticResource NBTArrayInlinesNameConverter}">
+                                    <Binding Path="Name"/>
+                                    <Binding Path="Value"/>
+                                </MultiBinding>
+                            </ap:TextBlockHelper.BindableInlines>
+                        </TextBlock>
+                    </StackPanel>
+                </HierarchicalDataTemplate>
+
+                <HierarchicalDataTemplate DataType="{x:Type editor:BaseNbtPrimitiveTreeItem}">
+                    <StackPanel Background="Transparent" Orientation="Horizontal" Height="18">
+                        <Image Source="{Binding TagType, Converter={StaticResource TagIconConverter}}" Width="16" Height="16"/>
+                        <TextBlock Margin="4 0 0 0">
+                            <ap:TextBlockHelper.BindableInlines>
+                                <MultiBinding Converter="{StaticResource NBTPrimitiveInlinesNameConverter}">
+                                    <Binding Path="Name"/>
+                                    <Binding Path="Value"/>
+                                </MultiBinding>
+                            </ap:TextBlockHelper.BindableInlines>
+                        </TextBlock>
+                    </StackPanel>
+                </HierarchicalDataTemplate>
+
+                <HierarchicalDataTemplate DataType="{x:Type nbt:ZipNBTDatVirtualFile}" ItemsSource="{Binding Items, Mode=OneTime}">
+                    <TextBlock Text="{Binding ZipFileName}"/>
+                </HierarchicalDataTemplate>
+                <HierarchicalDataTemplate DataType="{x:Type nbt:PhysicalNBTDatVirtualFile}" ItemsSource="{Binding Items, Mode=OneTime}">
+                    <cs:IconTextPairControl Text="{Binding FileName}" TargetFilePath="{Binding FilePath}" Background="Transparent"/>
                 </HierarchicalDataTemplate>
                 <HierarchicalDataTemplate DataType="{x:Type zip:NestedZipVirtualFile}" ItemsSource="{Binding Items, Mode=OneTime}">
                     <!-- A zip file within another zip file -->
@@ -105,19 +199,18 @@
                     <!-- A physical folder -->
                     <cs:IconTextPairControl Text="{Binding FileName}" TargetFilePath="{Binding FilePath}" Background="Transparent"/>
                 </HierarchicalDataTemplate>
+                <HierarchicalDataTemplate DataType="{x:Type zip:ZipEntryVirtualFolder}" ItemsSource="{Binding Items, Mode=OneTime}">
+                    <!-- A zip folder; todo, put an icon in here somewhere -->
+                    <TextBlock Text="{Binding ZipFileName}" ToolTip="{Binding FullZipPath}"/>
+                </HierarchicalDataTemplate>
+                <HierarchicalDataTemplate DataType="{x:Type zip:ZipEntryVirtualFile}" ItemsSource="{Binding Items, Mode=OneTime}">
+                    <!-- A zip file; todo, put an icon in here somewhere -->
+                    <TextBlock Text="{Binding ZipFileName}" ToolTip="{Binding FullZipPath}"/>
+                </HierarchicalDataTemplate>
                 <DataTemplate DataType="{x:Type physical:PhysicalVirtualFile}">
                     <!-- A physical file -->
                     <cs:IconTextPairControl Text="{Binding FileName}" TargetFilePath="{Binding FilePath}" Background="Transparent"/>
                 </DataTemplate>
-                <HierarchicalDataTemplate DataType="{x:Type nbt:ZipNBTDatVirtualFile}" ItemsSource="{Binding Items, Mode=OneTime}">
-                    <TextBlock Text="{Binding ZipFileName}"/>
-                </HierarchicalDataTemplate>
-                <HierarchicalDataTemplate DataType="{x:Type nbt:PhysicalNBTDatVirtualFile}" ItemsSource="{Binding Items, Mode=OneTime}">
-                    <cs:IconTextPairControl Text="{Binding FileName}" TargetFilePath="{Binding FilePath}" Background="Transparent"/>
-                </HierarchicalDataTemplate>
-                <HierarchicalDataTemplate DataType="{x:Type editor:BaseNBTCollectionTreeItem}" ItemsSource="{Binding Items, Mode=OneTime}">
-                    <TextBlock Text="{Binding Name, FallbackValue='!unnamed!'}"/>
-                </HierarchicalDataTemplate>
                 <DataTemplate DataType="{x:Type editor:BaseNBTTreeItem}">
                     <TextBlock Text="{Binding Name, FallbackValue='!unnamed!'}"/>
                 </DataTemplate>

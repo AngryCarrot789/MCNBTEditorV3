@@ -5,10 +5,7 @@ namespace MCNBTEditor.Editor.FileTree.Physical {
     /// The base class that represents all physical virtual files
     /// </summary>
     public abstract class BasePhysicalVirtualFile : TreeEntry {
-        public string FilePath {
-            get => this.GetData<string>(Win32FileSystem.FilePathKey);
-            internal set => this.SetData(Win32FileSystem.FilePathKey, value);
-        }
+        public string FilePath => this.GetData<string>(Win32FileSystem.FilePathKey);
 
         public string FileName {
             get {

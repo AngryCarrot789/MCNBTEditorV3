@@ -24,9 +24,8 @@ namespace MCNBTEditor.AdvancedContextService {
             set => this.RaisePropertyChanged(ref this.description, value);
         }
 
-        private IconType iconType;
-
-        public IconType IconType {
+        private string iconType;
+        public string IconType {
             get => this.iconType;
             set => this.RaisePropertyChanged(ref this.iconType, value);
         }

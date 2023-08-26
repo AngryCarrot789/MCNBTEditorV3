@@ -25,7 +25,7 @@ namespace MCNBTEditor.Utils {
                 return;
             }
 
-            IoC.Dispatcher.InvokeLater(this.AttemptExecuteOrRegisterTask);
+            IoC.ApplicationDispatcher.InvokeLater(this.AttemptExecuteOrRegisterTask);
         }
 
         public void AttemptExecuteOrRegisterTask() {

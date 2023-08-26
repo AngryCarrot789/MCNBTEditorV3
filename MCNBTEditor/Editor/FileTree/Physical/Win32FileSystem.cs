@@ -26,49 +26,78 @@ namespace MCNBTEditor.Editor.FileTree.Physical {
             try {
                 enumerable = info.EnumerateFileSystemInfos();
             }
-            catch (DirectoryNotFoundException e) {
-                await IoC.MessageDialogs.ShowMessageExAsync("Unauthorized Access", $"Cannot access the folder '{path}'", e.GetToString());
+            catch (DirectoryNotFoundException) {
+                await IoC.MessageDialogs.ShowMessageAsync("Directory not found", $"'{path}' no longer exists");
                 return false;
             }
             catch (UnauthorizedAccessException e) {
                 await IoC.MessageDialogs.ShowMessageExAsync("Unauthorized Access", $"Cannot access the folder '{path}'", e.GetToString());
                 return false;
             }
+            catch (Exception e) {
+                await IoC.MessageDialogs.ShowMessageExAsync("Error", $"An error occurred while getting files at '{path}'", e.GetToString());
+                return false;
+            }
 
             foreach (FileSystemInfo item in enumerable) {
-                target.AddItemCore(this.ForEntry(item));
+                target.AddItemCore(this.ForFileSystemInfo(item));
             }
 
             return true;
         }
 
-        public TreeEntry ForEntry(FileSystemInfo item) {
-            TreeEntry vfile;
-            if (item is DirectoryInfo directory) {
-                vfile = new PhysicalVirtualFolder {
-                    FilePath = directory.FullName,
-                    FileSystem = this
-                };
+        public TreeEntry ForFileSystemInfo(FileSystemInfo item) {
+            if (item is DirectoryInfo) {
+                return ForDirectory(item.FullName);
             }
             else {
-                FileInfo file = (FileInfo) item;
-                string extension = file.Extension;
-                if (extension == ".jar" || extension == ".zip") {
-                    vfile = new PhysicalZipVirtualFile(new ZipFileSystem(() => new BufferedStream(File.OpenRead(file.FullName))));
-                }
-                else if (extension == ".dat") {
-                    vfile = new PhysicalNBTDatVirtualFile(new NBTFileSystem(() => new BufferedStream(File.OpenRead(file.FullName))));
-                }
-                else {
-                    vfile = new PhysicalVirtualFile() {
-                        FileSystem = this
-                    };
-                }
+                return ForFile(item.FullName);
+            }
+        }
 
-                vfile.SetData(FilePathKey, file.FullName);
+        /// <summary>
+        /// Returns a new physical virtual folder, whose file system is set to the current instance, and file path is set to the given path
+        /// </summary>
+        /// <param name="path">Directory path</param>
+        /// <returns>A virtual folder</returns>
+        public PhysicalVirtualFolder ForDirectory(string path) {
+            PhysicalVirtualFolder entry = new PhysicalVirtualFolder { FileSystem = this };
+            entry.SetData(FilePathKey, path);
+            return entry;
+        }
+
+        /// <summary>
+        /// Returns a new physical file, whose file system is set to the current instance, and file path is set to the given path.
+        /// <para>
+        /// The type of the returned file is determined by the file path (e.g. '.zip' returns <see cref="PhysicalZipVirtualFile"/>)
+        /// </para>
+        /// </summary>
+        /// <param name="path">File path</param>
+        /// <returns>A virtual file</returns>
+        public PhysicalVirtualFile ForFile(string path) {
+            PhysicalVirtualFile entry;
+            string extension = Path.GetExtension(path);
+            if (extension == ".jar" || extension == ".zip") {
+                entry = new PhysicalZipVirtualFile(new ZipFileSystem(() => new BufferedStream(File.OpenRead(path))));
+            }
+            else if (extension == ".dat") {
+                entry = new PhysicalNBTDatVirtualFile(new NBTFileSystem(() => new BufferedStream(File.OpenRead(path))));
+            }
+            else {
+                entry = new PhysicalVirtualFile() { FileSystem = this };
             }
 
-            return vfile;
+            entry.SetData(FilePathKey, path);
+            return entry;
+        }
+
+        public TreeEntry ForFilePath(string path) {
+            if (Directory.Exists(path)) {
+                return ForDirectory(path);
+            }
+            else {
+                return ForFile(path);
+            }
         }
     }
 }

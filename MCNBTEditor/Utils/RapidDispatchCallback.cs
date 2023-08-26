@@ -35,10 +35,10 @@ namespace MCNBTEditor.Utils {
 
                 this.isScheduled = true;
                 if (this.InvokeLater) {
-                    IoC.Dispatcher.InvokeLater(callback);
+                    IoC.ApplicationDispatcher.InvokeLater(callback);
                 }
                 else {
-                    IoC.Dispatcher.Invoke(callback);
+                    IoC.ApplicationDispatcher.Invoke(callback);
                 }
 
                 return true;
@@ -58,10 +58,10 @@ namespace MCNBTEditor.Utils {
 
                 this.isScheduled = true;
                 if (this.InvokeLater) {
-                    IoC.Dispatcher.InvokeLater(callback);
+                    IoC.ApplicationDispatcher.InvokeLater(callback);
                 }
                 else {
-                    IoC.Dispatcher.Invoke(callback);
+                    IoC.ApplicationDispatcher.Invoke(callback);
                 }
 
                 return true;

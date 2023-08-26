@@ -2,9 +2,10 @@
 using System.Windows.Controls;
 using System.Windows.Input;
 using MCNBTEditor.Editor.FileTree;
+using MCNBTEditor.WPF.Controls.TreeViews.Controls;
 
 namespace MCNBTEditor.WPF.Explorer {
-    internal class FileTreeItem : TreeViewItem {
+    internal class FileTreeItem : MultiSelectTreeViewItem {
         private bool isProcessingNavigation;
 
         public FileTreeItem() {

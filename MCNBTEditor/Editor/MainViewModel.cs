@@ -9,16 +9,16 @@ namespace MCNBTEditor.Editor {
     public class MainViewModel : BaseViewModel {
         public AsyncRelayCommand OpenFolderCommand { get; }
 
-        public Tree FileTree { get; }
+        public FileTree.FileTree FileTree { get; }
 
         public MainViewModel() {
             this.OpenFolderCommand = new AsyncRelayCommand(this.OpenFolderAction);
-            this.FileTree = new Tree();
+            this.FileTree = new FileTree.FileTree();
             this.FileTree.NavigateToItem += this.FileTree_NavigateToItem;
 
             string file = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.Desktop), "level.dat");
             if (File.Exists(file)) {
-                // this.FileTree.Root.AddFile();
+                this.FileTree.Root.AddItemCore(Win32FileSystem.Instance.ForFile(file));
             }
         }
 
@@ -38,9 +38,7 @@ namespace MCNBTEditor.Editor {
 
             TreeEntry first = this.FileTree.Root.Items.FirstOrDefault(x => x.TryGetData(Win32FileSystem.FilePathKey, out string fpath) && fpath == path);
             if (first == null) {
-                this.FileTree.Root.AddItemCore(new PhysicalVirtualFolder() {
-                    FilePath = path, FileSystem = Win32FileSystem.Instance
-                });
+                this.FileTree.Root.AddItemCore(Win32FileSystem.Instance.ForDirectory(path));
             }
             else {
                 await first.RefreshAsync();

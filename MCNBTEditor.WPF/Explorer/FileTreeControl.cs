@@ -3,7 +3,7 @@ using System.Windows.Controls;
 using MCNBTEditor.WPF.Controls.TreeViews.Controls;
 
 namespace MCNBTEditor.WPF.Explorer {
-    internal class FileTreeControl : TreeView {
+    internal class FileTreeControl : MultiSelectTreeView {
         public FileTreeControl() {
 
         }

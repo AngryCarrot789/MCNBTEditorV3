@@ -76,6 +76,11 @@
     <Compile Include="Controls\TreeViews\Controls\SelectionMultiple.cs" />
     <Compile Include="Controls\TreeViews\Controls\SelectionSingle.cs" />
     <Compile Include="Controls\TreeViews\Controls\ThicknessLeftConverter.cs" />
+    <Compile Include="Converters\BaseNBTHeaderRunConverter.cs" />
+    <Compile Include="Converters\NBTArrayInlineHeaderConverter.cs" />
+    <Compile Include="Converters\NBTCollectionInlineHeaderConverter.cs" />
+    <Compile Include="Converters\NBTPrimitiveInlineHeaderConverter.cs" />
+    <Compile Include="Converters\TagIconConverter.cs" />
     <Compile Include="DummyTreeItemStyleSelector.cs" />
     <Compile Include="PropertyEditing\PropertyEditor.cs" />
     <Compile Include="PropertyEditing\PropertyEditorItemContainer.cs" />
@@ -142,7 +147,7 @@
     <Compile Include="Utils\CASLock.cs" />
     <Compile Include="Utils\ConditionMonitor.cs" />
     <Compile Include="Utils\DispatcherCallback.cs" />
-    <Compile Include="Utils\DispatcherDelegate.cs" />
+    <Compile Include="Utils\ApplicationDispatcherDelegate.cs" />
     <Compile Include="Utils\DispatcherUtils.cs" />
     <Compile Include="Utils\DynamicCodeConverter.cs" />
     <Compile Include="Utils\FileExtensionsHelper.cs" />
@@ -566,11 +571,36 @@
       <Generator>SettingsSingleFileGenerator</Generator>
       <LastGenOutput>Settings.Designer.cs</LastGenOutput>
     </None>
+    <None Include="Resources\Icons\FileIcon.psd" />
+    <None Include="Resources\Icons\TagArrayIcon.psd" />
   </ItemGroup>
   <ItemGroup>
     <None Include="App.config" />
   </ItemGroup>
   <ItemGroup>
+    <Resource Include="Resources\AppIcon.ico" />
+    <Resource Include="Resources\Icons\Credits.txt" />
+    <Resource Include="Resources\Icons\FileIcon-Region.png" />
+    <Resource Include="Resources\Icons\FileIcon-TagByte8.png" />
+    <Resource Include="Resources\Icons\FileIcon-TagByteArray.png" />
+    <Resource Include="Resources\Icons\FileIcon-TagDouble64.png" />
+    <Resource Include="Resources\Icons\FileIcon-TagFloat32.png" />
+    <Resource Include="Resources\Icons\FileIcon-TagInt32.png" />
+    <Resource Include="Resources\Icons\FileIcon-TagIntArray.png" />
+    <Resource Include="Resources\Icons\FileIcon-TagLong64.png" />
+    <Resource Include="Resources\Icons\FileIcon-TagLongArray.png" />
+    <Resource Include="Resources\Icons\FileIcon-TagShort16.png" />
+    <Resource Include="Resources\Icons\FileIcon-TagString.png" />
+    <Resource Include="Resources\Icons\icons8-bulleted-list-48.png" />
+    <Resource Include="Resources\Icons\icons8-closed-box-48.png" />
+    <Resource Include="Resources\Icons\icons8-empty-box-48.png" />
+    <Resource Include="Resources\Icons\icons8-open-box-48.png" />
+    <Resource Include="Resources\Icons\TagArrayIcon.png" />
+    <Resource Include="Resources\Icons\UIGeneral\icons8-copy-48.png" />
+    <Resource Include="Resources\Icons\UIGeneral\icons8-copy-to-clipboard-48.png" />
+    <Resource Include="Resources\Icons\UIGeneral\icons8-edit-48.png" />
+    <Resource Include="Resources\Icons\UIGeneral\icons8-paste-48.png" />
+    <Resource Include="Resources\Icons\UIGeneral\icons8-sync-48.png" />
     <Resource Include="Controls\TreeViews\Source Code.txt" />
     <Content Include="Keymap.xml">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>

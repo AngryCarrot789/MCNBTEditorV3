@@ -10,13 +10,13 @@ namespace MCNBTEditor.WPF.AdvancedContextService {
     public class AdvancedMenuItem : MenuItem {
         private object currentItem;
 
-        public static readonly DependencyProperty IconTypeProperty = DependencyProperty.Register("IconType", typeof(IconType), typeof(AdvancedMenuItem), new PropertyMetadata(IconType.None, PropertyChangedCallback));
+        public static readonly DependencyProperty IconTypeProperty = DependencyProperty.Register("IconType", typeof(string), typeof(AdvancedMenuItem), new PropertyMetadata(null, PropertyChangedCallback));
         public static readonly DependencyProperty CommandParameterTargetTypeProperty = DependencyProperty.Register("CommandParameterTargetType", typeof(Type), typeof(AdvancedMenuItem), new PropertyMetadata(null));
         public static readonly DependencyProperty ForceCommandOnMissingTargetTypeProperty = DependencyProperty.Register("ForceCommandOnMissingTargetType", typeof(bool), typeof(AdvancedMenuItem), new PropertyMetadata(BoolBox.False));
 
         private static void PropertyChangedCallback(DependencyObject d, DependencyPropertyChangedEventArgs e) {
             if (d is AdvancedMenuItem item) {
-                if (IconTypeToImageSourceConverter.IconTypeToImageSource((IconType) e.NewValue) is ImageSource x) {
+                if (IconTypeToImageSourceConverter.IconTypeToImageSource((string) e.NewValue) is ImageSource x) {
                     Image image = new Image {
                         Source = x, Stretch = Stretch.Uniform,
                         SnapsToDevicePixels = true,
@@ -31,8 +31,8 @@ namespace MCNBTEditor.WPF.AdvancedContextService {
             }
         }
 
-        public IconType IconType {
-            get => (IconType) this.GetValue(IconTypeProperty);
+        public string IconType {
+            get => (string) this.GetValue(IconTypeProperty);
             set => this.SetValue(IconTypeProperty, value);
         }
 

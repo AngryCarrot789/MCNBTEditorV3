@@ -3,7 +3,7 @@
                     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
                     xmlns:themes="clr-namespace:Microsoft.Windows.Themes;assembly=PresentationFramework.Aero2"
                     xmlns:ap="clr-namespace:MCNBTEditor.WPF.Themes.Attached"
-                    xmlns:attachedProperties="clr-namespace:MCNBTEditor.WPF.AttachedProperties"
+                    xmlns:ap2="clr-namespace:MCNBTEditor.WPF.AttachedProperties"
                     xmlns:views="clr-namespace:MCNBTEditor.WPF.Views"
                     xmlns:controls="clr-namespace:MCNBTEditor.WPF.Controls">
     <BorderGapMaskConverter x:Key="BorderGapMaskConverter"/>
@@ -4693,7 +4693,7 @@
                                       HorizontalScrollBarVisibility="{TemplateBinding ScrollViewer.HorizontalScrollBarVisibility}"
                                       Padding="{TemplateBinding Padding}" SnapsToDevicePixels="{TemplateBinding SnapsToDevicePixels}"
                                       VerticalScrollBarVisibility="{TemplateBinding ScrollViewer.VerticalScrollBarVisibility}"
-                                      attachedProperties:HorizontalScrolling.UseHorizontalScrolling="True">
+                                      ap2:HorizontalScrolling.UseHorizontalScrolling="True">
                             <ItemsPresenter/>
                         </ScrollViewer>
                     </Border>

@@ -56,7 +56,7 @@ namespace MCNBTEditor {
         public virtual void RaiseCanExecuteChanged() {
             EventHandler handler = this.CanExecuteChanged;
             if (handler != null) {
-                IoC.Dispatcher.Invoke(() => handler(this, EventArgs.Empty));
+                IoC.ApplicationDispatcher.Invoke(() => handler(this, EventArgs.Empty));
             }
         }
 
